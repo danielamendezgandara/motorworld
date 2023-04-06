@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout.html :: html_head">
+<meta charset="UTF-8">
+</head>
+<body class="min-vh-100 d-flex flex-column justify-content-between">
+
+	<div th:insert="fragments/layout :: navbar"></div>
+	<main role="main">
+		<hr>
+		<div class="container">
+
+			<div class="card">
+				<h4 class="card-header">
+					<strong>Reporte de Ordenes por Tienda</strong>
+				</h4>
+				<div class="card-body">
+					<form th:action="@{/orders/list}" method="post">
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+								<label for="store">Tienda</label> <select
+										class="form-control" name="store" id="store">
+										<option th:each="store:${stores}"
+											th:value="${store.getIdStore()}" th:text="${store.getStoreName()}"></option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="status">Estado</label> <select
+										class="form-control" name="status" 
+										id="status">
+										<option value="1">Pendiente</option>
+										<option value="2">En Proceso</option>
+										<option value="3">Rechazada</option>
+										<option value="4">Completada</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="fromDate">Fecha Orden (Desde)</label> <input
+										type="date" class="form-control" name="fromDate"
+							            id="fromDate"
+										placeholder="" required="required">
+								</div>
+							</div>
+						  <div class="col-md-3">
+								<div class="form-group">
+									<label for="toDate">Fecha de Orden(Hasta)</label> <input
+										type="date" class="form-control" name="toDate"
+									     id="toDate"
+										placeholder="" required="required">
+								</div>
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">Buscar</button>
+					</form>
+				</div>
+				
+			</div>
+			<div th:if="${postResponse==true}" class="alert alert-success alert-dismissible fade show"
+						role="alert">
+						<strong><span  th:text="'Tienda '+ ${storeName} + ' Estado : ' + ${orderStatusS} + '  desde : '+ ${fromDate} + '  hasta : '+ ${toDate}"></span></strong>
+						<button type="button" class="close" data-dismiss="alert"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+			<div class="card">
+          <h4 class="card-header"><strong>Ordenes</strong></h4>              
+          <div class="card-body">
+            <table id="table-orders"
+				class="table table-striped table-bordered" style="width: 100%">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">ID Orden</th>
+                  <th scope="col">Vendedor</th>                  
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Fecha Orden</th>
+                  <th scope="col">Fecha Requerida</th>
+                  <th scope="col">Estado</th>
+                   <th scope="col">Acción</th>
+                    
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="order: ${orders}">
+				
+				<td th:text="${order.getId() }"></td>
+				<td th:text="${order.getStaff().getFirstName()} + ' ' + ${order.getStaff().getLastName()}"></td>
+				<td th:text="${order.getCustomer().getFirstName} + ' ' + ${order.getCustomer().getLastName} "></td>
+				<td th:text="${order.getOrderDate()}"></td>
+				<td th:text="${order.getRequiredDate()}"></td>
+				<td th:if="${order.getOrderStatus() == 1}" >Pendiente</td>
+				<td th:if="${order.getOrderStatus() == 2}" >En Proceso</td>
+				<td th:if="${order.getOrderStatus() == 3}" >Rechazada</td>
+				<td th:if="${order.getOrderStatus() == 4}" >Completada</td>
+				<td>
+                    <a href="#" class="btn btn-success btn-sm" role="button" title="Ver orden">VER</a>
+                 </td>
+			</tr>
+                               
+              </tbody>
+            </table>
+            
+          </div>
+        </div>
+		</div>
+		<!-- /container -->
+
+	</main>
+
+	<!-- Footer y scripts -->
+	<div th:insert="fragments/layout :: footer"></div>
+	<th:block th:insert="fragments/layout :: body/script"></th:block>
+</body>
+</html>
